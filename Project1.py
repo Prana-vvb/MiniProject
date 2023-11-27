@@ -9,6 +9,9 @@ turtle.ht() #Hide the turtle created by default
 turtle.setundobuffer(1) #Reduce strain on system memory
 turtle.tracer(1) #Increase drawing speed
 
+maxSpeed = 4
+minSpeed = 0
+
 #Actors are in-game objects. Child class of the turtle class
 class Actors(turtle.Turtle):
     #Default attributes for all actors
@@ -23,6 +26,19 @@ class Actors(turtle.Turtle):
     #Actor movement
     def move(self):
         self.fd(self.speed)
+        #Border collision detection
+        if self.xcor() > 340:
+            self.setx(340)
+            self.rt(60)
+        elif self.xcor() < -340:
+            self.setx(-340)
+            self.rt(60)
+        elif self.ycor() > 290:
+            self.sety(290)
+            self.rt(60)
+        elif self.ycor() < -290:
+            self.sety(-290)
+            self.rt(60)
 
 #Player class. Child of Sprites
 class Player(Actors):
@@ -39,13 +55,40 @@ class Player(Actors):
         self.rt(45)
     
     def accelerate(self):
-        self.speed += 1
+        if self.speed < maxSpeed:
+            self.speed += 1
     
     def decelerate(self):
-        self.speed -= 1
+        if self.speed > minSpeed:
+            self.speed -= 1
 
+#Game info(score, levels etc.)
+class Game():
+    def __init__(self):
+        self.level = 1
+        self.score = 0
+        self.gstate = 'play'
+        self.pen = turtle.Turtle()
+        self.lives = 3
+    
+    def border(self):
+        self.pen.speed(0)
+        self.pen.ht()
+        self.pen.color('white')
+        self.pen.pensize(4)
+        self.pen.penup()
+        self.pen.goto(-350, 300)
+        self.pen.pendown()
+        for i in range(2):
+            self.pen.fd(700)
+            self.pen.rt(90)
+            self.pen.fd(600)
+            self.pen.rt(90)
+        self.pen.penup()
 
 player = Player('classic', 'white', 0, 0) #Create player object
+game = Game() #Create game object
+game.border() #Draw game border
 
 #Key bindings
 turtle.onkey(player.turnL, 'Left')
