@@ -61,6 +61,11 @@ class Player(Actors):
     def decelerate(self):
         if self.speed > minSpeed:
             self.speed -= 1
+# enimies 
+class Enemies(Actors):
+    def __init__(self, ashape, color, startX, startY):
+        Actors.__init__(self, ashape, color, startX, startY)
+        self.speed = 6
 
 #Game info(score, levels etc.)
 class Game():
@@ -87,6 +92,7 @@ class Game():
         self.pen.penup()
 
 player = Player('classic', 'white', 0, 0) #Create player object
+enemy = Enemies('circle', 'red', -100, 0 )#creating enemy object
 game = Game() #Create game object
 game.border() #Draw game border
 
@@ -108,6 +114,6 @@ turtle.listen()
 def main():
     while True:
         player.move()
-
+        enemy.move()
 if __name__ == '__main__':
     main()
