@@ -9,10 +9,10 @@ turtle.ht() #Hide the turtle created by default
 turtle.setundobuffer(1) #Reduce strain on system memory
 turtle.tracer(1) #Increase drawing speed
 
-maxSpeed = 4
+maxSpeed = 6
 minSpeed = 0
 
-#Actors are in-game objects. Child class of the turtle class
+#Actors are in-game objects. Child class of the turtle module
 class Actors(turtle.Turtle):
     #Default attributes for all actors
     def __init__(self, ashape, color, startX, startY):
@@ -26,21 +26,28 @@ class Actors(turtle.Turtle):
     #Actor movement
     def move(self):
         self.fd(self.speed)
-        #Border collision detection
+        #Actor-Border collision detection
         if self.xcor() > 340:
-            self.setx(340)
+            self.setx(339)
             self.rt(60)
         elif self.xcor() < -340:
-            self.setx(-340)
+            self.setx(-341)
             self.rt(60)
         elif self.ycor() > 290:
-            self.sety(290)
+            self.sety(289)
             self.rt(60)
         elif self.ycor() < -290:
-            self.sety(-290)
+            self.sety(-291)
             self.rt(60)
+        
+    #Actor-Actor collision detection
+    def collision(self, actor):
+        if (self.xcor() <= actor.xcor() + 10) and (self.xcor() >= actor.xcor() - 10) and (self.ycor() <= actor.ycor() + 10) and (self.ycor() >= actor.ycor() - 10):
+            return True
+        else:
+            return False
 
-#Player class. Child of Sprites
+#Player class. Child of Actors
 class Player(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
@@ -61,18 +68,20 @@ class Player(Actors):
     def decelerate(self):
         if self.speed > minSpeed:
             self.speed -= 1
-# enimies 
+
+#Enemy class. Child of Actors  
 class Enemies(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
-        self.speed = 6
+        self.speed = 4 #Default enemy speed. Can change based on level
+        self.setheading(random.randint(0, 360)) #For random starting direction of enemies
 
 #Game info(score, levels etc.)
 class Game():
     def __init__(self):
         self.level = 1
         self.score = 0
-        self.gstate = 'play'
+        self.gameState = 'play'
         self.pen = turtle.Turtle()
         self.lives = 3
     
@@ -92,7 +101,7 @@ class Game():
         self.pen.penup()
 
 player = Player('classic', 'white', 0, 0) #Create player object
-enemy = Enemies('circle', 'red', -100, 0 )#creating enemy object
+enemy = Enemies('circle', 'red', -100, 0 )#Create enemy object
 game = Game() #Create game object
 game.border() #Draw game border
 
@@ -115,5 +124,8 @@ def main():
     while True:
         player.move()
         enemy.move()
+        if player.collision(enemy):
+            enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #For collision testing purposes. Do not use in final
+
 if __name__ == '__main__':
     main()
