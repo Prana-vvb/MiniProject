@@ -9,8 +9,8 @@ turtle.ht() #Hide the turtle created by default
 turtle.setundobuffer(1) #Reduce strain on system memory
 turtle.tracer(1) #Increase drawing speed
 
-maxSpeed = 6
-minSpeed = 0
+maxSpeed = 6 #Set max speed of player
+minSpeed = 0 #Set min speed of player
 
 #Actors are in-game objects. Child class of the turtle module
 class Actors(turtle.Turtle):
@@ -69,40 +69,26 @@ class Player(Actors):
         if self.speed > minSpeed:
             self.speed -= 1
 
-#Enemy class. Child of Actors  
+#Enemies. Child of Actors  
 class Enemies(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
-        self.speed = 0 
+        self.speed = 3
         self.setheading(random.randint(0, 360))
-        
+
+#Friendlies. Child of Actors
 class Ally(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
-        self.speed = 0
+        self.speed = 4
         self.setheading(random.randint(0, 360))
-        
-        def move(self):
-            self.fd(self.speed)
-            #Actor-Border collision detection
-            if self.xcor() > 340:
-                self.setx(339)
-                self.rt(60)
-            elif self.xcor() < -340:
-                self.setx(-341)
-                self.rt(60)
-            elif self.ycor() > 290:
-                self.sety(289)
-                self.rt(60)
-            elif self.ycor() < -290:
-                self.sety(-291)
-                self.rt(60)
-#missiles
-class Missile(Actors):
+
+#Missiles/Bullets for the player
+class Projectile(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
-        self.shapesize(stretch_wid=0.3, stretch_len=0.4, outline = None)
-        self.speed = 20
+        self.shapesize(stretch_wid=0.3, stretch_len=0.4)
+        self.speed = 15
         self.status = "ready"
         self.goto(-1000,1000)
         
@@ -113,12 +99,10 @@ class Missile(Actors):
             self.status =  "firing"
             
     def move(self):
-        
         if self.status == "firing":
             self.fd(self.speed) 
-        #border check
-        if self.xcor()<-290 or self.xcor() > 290 or \
-            self.ycor()<-290 or self.ycor() > 290 :
+        #Border-Projectile collision check
+        if self.xcor()<-340 or self.xcor() > 340 or self.ycor()<-290 or self.ycor() > 290 :
             self.goto(-1000,1000)
             self.status = 'ready'
             
@@ -145,12 +129,11 @@ class Game():
             self.pen.fd(600)
             self.pen.rt(90)
         self.pen.penup()
-        
 
 player = Player('classic', 'white', 0, 0) #Create player object
 enemy = Enemies('circle', 'red', -100, 0 )#Create enemy object
-missile = Missile("triangle", "yellow", 0, 0)#creating missile
-ally= Ally("square", "blue", 200, 0)#creating ally
+missile = Projectile("triangle", "yellow", 0, 0)#Create projectile object
+ally= Ally("square", "blue", 200, 0)#Create ally object
 game = Game() #Create game object
 game.border() #Draw game border
 
@@ -177,18 +160,18 @@ def main():
         enemy.move()
         missile.move()
         ally.move()
-        #checking collision player enemy
+        #Checking Player-Enemy collision
         if player.collision(enemy):
             enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #For collision testing purposes. Do not use in final
             
-        #collsion missile-enemy
+        #Checking Projectile-Enemy collision
         if missile.collision(enemy):
-            enemy.goto(random.randint(-300, 300), random.randint(-250, 250))
+            enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #Collision testing
             missile.status= "ready"  
             
-        #collsion missile-ally
+        #Checking Projectile-Ally collision
         if missile.collision(ally):
-            ally.goto(random.randint(-300, 300), random.randint(-250, 250))
+            ally.goto(random.randint(-300, 300), random.randint(-250, 250)) #Collision testing
             missile.status= "ready"  
             
 
