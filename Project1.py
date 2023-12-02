@@ -73,9 +73,55 @@ class Player(Actors):
 class Enemies(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
-        self.speed = 4 #Default enemy speed. Can change based on level
-        self.setheading(random.randint(0, 360)) #For random starting direction of enemies
-
+        self.speed = 0 
+        self.setheading(random.randint(0, 360))
+        
+class Ally(Actors):
+    def __init__(self, ashape, color, startX, startY):
+        Actors.__init__(self, ashape, color, startX, startY)
+        self.speed = 0
+        self.setheading(random.randint(0, 360))
+        
+        def move(self):
+            self.fd(self.speed)
+            #Actor-Border collision detection
+            if self.xcor() > 340:
+                self.setx(339)
+                self.rt(60)
+            elif self.xcor() < -340:
+                self.setx(-341)
+                self.rt(60)
+            elif self.ycor() > 290:
+                self.sety(289)
+                self.rt(60)
+            elif self.ycor() < -290:
+                self.sety(-291)
+                self.rt(60)
+#missiles
+class Missile(Actors):
+    def __init__(self, ashape, color, startX, startY):
+        Actors.__init__(self, ashape, color, startX, startY)
+        self.shapesize(stretch_wid=0.3, stretch_len=0.4, outline = None)
+        self.speed = 20
+        self.status = "ready"
+        self.goto(-1000,1000)
+        
+    def fire(self):
+        if self.status == 'ready':
+            self.goto(player.xcor(), player.ycor())
+            self.setheading(player.heading())
+            self.status =  "firing"
+            
+    def move(self):
+        
+        if self.status == "firing":
+            self.fd(self.speed) 
+        #border check
+        if self.xcor()<-290 or self.xcor() > 290 or \
+            self.ycor()<-290 or self.ycor() > 290 :
+            self.goto(-1000,1000)
+            self.status = 'ready'
+            
 #Game info(score, levels etc.)
 class Game():
     def __init__(self):
@@ -99,9 +145,12 @@ class Game():
             self.pen.fd(600)
             self.pen.rt(90)
         self.pen.penup()
+        
 
 player = Player('classic', 'white', 0, 0) #Create player object
 enemy = Enemies('circle', 'red', -100, 0 )#Create enemy object
+missile = Missile("triangle", "yellow", 0, 0)#creating missile
+ally= Ally("square", "blue", 200, 0)#creating ally
 game = Game() #Create game object
 game.border() #Draw game border
 
@@ -117,6 +166,8 @@ turtle.onkey(player.accelerate, 'w')
 
 turtle.onkey(player.decelerate, 'Down')
 turtle.onkey(player.decelerate, 's')
+
+turtle.onkey(missile.fire, "space")
 turtle.listen()
 
 #Main game loop
@@ -124,8 +175,22 @@ def main():
     while True:
         player.move()
         enemy.move()
+        missile.move()
+        ally.move()
+        #checking collision player enemy
         if player.collision(enemy):
             enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #For collision testing purposes. Do not use in final
+            
+        #collsion missile-enemy
+        if missile.collision(enemy):
+            enemy.goto(random.randint(-300, 300), random.randint(-250, 250))
+            missile.status= "ready"  
+            
+        #collsion missile-ally
+        if missile.collision(ally):
+            ally.goto(random.randint(-300, 300), random.randint(-250, 250))
+            missile.status= "ready"  
+            
 
 if __name__ == '__main__':
     main()
