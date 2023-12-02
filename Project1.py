@@ -115,6 +115,7 @@ class Game():
         self.pen = turtle.Turtle()
         self.lives = 3
     
+    #Draws the border for the playable game area
     def border(self):
         self.pen.speed(0)
         self.pen.ht()
