@@ -7,7 +7,7 @@ turtle.speed(0) #Set animation speed to max
 turtle.bgcolor('black') #Set screen background color
 turtle.ht() #Hide the turtle created by default
 turtle.setundobuffer(1) #Reduce strain on system memory
-turtle.tracer(1) #Increase drawing speed
+turtle.tracer(0) #Increase drawing speed
 
 maxSpeed = 6
 minSpeed = 0
@@ -73,13 +73,13 @@ class Player(Actors):
 class Enemies(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
-        self.speed = 0 
+        self.speed = 1
         self.setheading(random.randint(0, 360))
         
 class Ally(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
-        self.speed = 0
+        self.speed = 1
         self.setheading(random.randint(0, 360))
         
         def move(self):
@@ -96,7 +96,7 @@ class Ally(Actors):
                 self.rt(60)
             elif self.ycor() < -290:
                 self.sety(-291)
-                self.rt(60)
+                self.rt(10)
 #missiles
 class Missile(Actors):
     def __init__(self, ashape, color, startX, startY):
@@ -137,7 +137,7 @@ class Game():
         self.pen.color('white')
         self.pen.pensize(4)
         self.pen.penup()
-        self.pen.goto(-350, 300)
+        self.pen.goto(-310, 300)
         self.pen.pendown()
         for i in range(2):
             self.pen.fd(700)
@@ -145,14 +145,32 @@ class Game():
             self.pen.fd(600)
             self.pen.rt(90)
         self.pen.penup()
+        self.pen.ht()
+        self.pen.pendown()
         
+    def show_status(self):
+        self.pen.undo()
+        msg = "score: %s" %(self.score)
+        self.pen.penup()
+        self.pen.goto(-320,310)
+        self.pen.write(msg, font=("Arial", 16, "normal"))
 
 player = Player('classic', 'white', 0, 0) #Create player object
-enemy = Enemies('circle', 'red', -100, 0 )#Create enemy object
+#enemy = Enemies('circle', 'red', -100, 0 )#Create enemy object
 missile = Missile("triangle", "yellow", 0, 0)#creating missile
-ally= Ally("square", "blue", 200, 0)#creating ally
+#ally= Ally("square", "blue", 100, 0)#creating ally
+
+enemies = []
+for i in range(6):
+    enemies.append(Enemies("square","red",-100,0))
+    
+allies = []
+for i in range(3):
+    allies.append(Ally("circle","blue", 100, 0))
+    
 game = Game() #Create game object
 game.border() #Draw game border
+game.show_status() #Show the game statsus
 
 #Key bindings
 turtle.onkey(player.turnL, 'Left')
@@ -173,24 +191,58 @@ turtle.listen()
 #Main game loop
 def main():
     while True:
+        turtle.update()
         player.move()
-        enemy.move()
         missile.move()
-        ally.move()
+        
+        for enemy in enemies:
+            enemy.move()
+            #checking collision player enemy
+            if player.collision(enemy):
+                enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #For collision testing purposes. Do not use in final
+                #score increase
+                game.score -= 100
+                game.show_status( )
+                
+             #collsion missile-enemy
+            if missile.collision(enemy):
+                enemy.goto(random.randint(-300, 300), random.randint(-250, 250))
+                missile.status= "ready" 
+                game.score += 100
+                game.show_status() 
+            
+                
+        for ally in allies:
+            ally.move()
+            
+            #collsion missile-ally
+            if missile.collision(ally):
+                ally.goto(random.randint(-300, 300), random.randint(-250, 250))
+                missile.status= "ready" 
+                #score decrease
+                game.score -= 50
+                game.show_status()
+            
         #checking collision player enemy
         if player.collision(enemy):
             enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #For collision testing purposes. Do not use in final
-            
+            #score increase
+            game.score -= 100
+            game.show_status()
         #collsion missile-enemy
         if missile.collision(enemy):
             enemy.goto(random.randint(-300, 300), random.randint(-250, 250))
-            missile.status= "ready"  
+            missile.status= "ready" 
+            game.score += 100
+            game.show_status() 
             
         #collsion missile-ally
         if missile.collision(ally):
             ally.goto(random.randint(-300, 300), random.randint(-250, 250))
-            missile.status= "ready"  
-            
+            missile.status= "ready" 
+            #score decrease
+            game.score -= 50
+            game.show_status()
 
 if __name__ == '__main__':
     main()
