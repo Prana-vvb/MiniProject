@@ -101,7 +101,7 @@ class Ally(Actors):
 class Missile(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
-        self.shapesize(stretch_wid=0.3, stretch_len=0.4, outline = None)
+        self.shapesize(stretch_wid=0.3, stretch_len=0.4)
         self.speed = 20
         self.status = "ready"
         self.goto(-1000,1000)
@@ -123,14 +123,15 @@ class Missile(Actors):
             self.status = 'ready'
             
 #Game info(score, levels etc.)
-class Game():
+class Game:
     def __init__(self):
         self.level = 1
         self.score = 0
         self.gameState = 'play'
         self.pen = turtle.Turtle()
         self.lives = 3
-    
+
+    #Draws the border of the playable game area
     def border(self):
         self.pen.speed(0)
         self.pen.ht()
