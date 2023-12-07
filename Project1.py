@@ -97,8 +97,9 @@ class Ally(Actors):
             elif self.ycor() < -290:
                 self.sety(-291)
                 self.rt(10)
-#missiles
-class Missile(Actors):
+
+#Bullets/Missiles for the player
+class Projectile(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
         self.shapesize(stretch_wid=0.3, stretch_len=0.4)
@@ -171,7 +172,7 @@ for i in range(3):
     
 game = Game() #Create game object
 game.border() #Draw game border
-game.show_status() #Show the game statsus
+game.show_status() #Show the game stats
 
 #Key bindings
 turtle.onkey(player.turnL, 'Left')
