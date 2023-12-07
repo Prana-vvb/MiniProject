@@ -159,7 +159,7 @@ class Game:
 
 player = Player('classic', 'white', 0, 0) #Create player object
 #enemy = Enemies('circle', 'red', -100, 0 )#Create enemy object
-missile = Missile("triangle", "yellow", 0, 0)#creating missile
+missile = Projectile("triangle", "yellow", 0, 0)#creating missile
 #ally= Ally("square", "blue", 100, 0)#creating ally
 
 enemies = []
