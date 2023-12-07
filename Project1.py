@@ -90,7 +90,7 @@ class Projectile(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
         self.shapesize(stretch_wid=0.3, stretch_len=0.4)
-        self.speed = 15
+        self.speed = 20
         self.status = "ready"
         self.goto(-1000,1000)
         
@@ -109,7 +109,7 @@ class Projectile(Actors):
             self.status = 'ready'
             
 #Game info(score, levels etc.)
-class Game():
+class Game:
     def __init__(self):
         self.level = 1
         self.score = 0
@@ -117,7 +117,7 @@ class Game():
         self.pen = turtle.Turtle()
         self.lives = 3
     
-    #Draws the border for the playable game area
+    #Draws the border of the playable game area
     def border(self):
         self.pen.speed(0)
         self.pen.ht()
@@ -170,11 +170,13 @@ def main():
         #Checking Projectile-Enemy collision
         if missile.collision(enemy):
             enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #Collision testing
+            missile.goto(-1000,1000)
             missile.status= "ready"  
             
         #Checking Projectile-Ally collision
         if missile.collision(ally):
             ally.goto(random.randint(-300, 300), random.randint(-250, 250)) #Collision testing
+            missile.goto(-1000,1000)
             missile.status= "ready"  
             
 
