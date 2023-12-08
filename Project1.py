@@ -1,6 +1,7 @@
 import os
 import turtle
 import random
+import winsound
 
 #Create screen
 turtle.speed(0) #Set animation speed to max
