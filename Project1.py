@@ -1,7 +1,8 @@
 import os
 import turtle
 import random
-import winsound
+#from pydub import AudioSegment
+#from pydub.playback import play
 
 #Create screen
 turtle.speed(0) #Set animation speed to max
@@ -98,6 +99,7 @@ class Projectile(Actors):
         
     def fire(self):
         if self.status == 'ready':
+            #play(AudioSegment.from_wav("projectileFire.wav"))
             self.goto(player.xcor(), player.ycor())
             self.setheading(player.heading())
             self.status =  "firing"
@@ -145,9 +147,13 @@ game = Game() #Create game object
 game.border() #Draw game border
 game.status() #Display game stats(Score, player lives, level etc.)
 player = Player('classic', 'white', 0, 0) #Create player object
-enemy = Enemy('circle', 'red', -100, 0 )#Create enemy object
-missile = Projectile("triangle", "yellow", 0, 0)#Create projectile object
-ally= Ally("square", "blue", 200, 0)#Create ally object
+enemies = []
+for i in range(6):
+    enemies.append(Enemy('circle', 'red', -100, 0)) #Create enemy objects
+missile = Projectile("triangle", "yellow", 0, 0) #Create projectile object
+allies = []
+for i in range(6):
+    allies.append(Ally("square", "blue", 200, 0)) #Create ally object
 
 #Key bindings
 turtle.onkey(player.turnL, 'Left')
@@ -169,33 +175,38 @@ turtle.listen()
 def main():
     while True:
         player.move()
-        enemy.move()
-        missile.move()
-        ally.move()
-        #Checking Player-Enemy collision
-        if player.collision(enemy):
-            enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #For collision testing purposes. Do not use in final
-            game.score -= 25 #Loses less points because kamikaze lol
-            game.status()
 
-        if player.collision(ally):
-            ally.goto(random.randint(-300, 300), random.randint(-250, 250)) #For collision testing purposes. Do not use in final
-            game.score -= 50
-            game.status()
-            
-        #Checking Projectile-Enemy collision
-        if missile.collision(enemy):
-            enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #Collision testing
-            missile.status= "ready"
-            game.score += 100
-            game.status()
-            
-        #Checking Projectile-Ally collision
-        if missile.collision(ally):
-            ally.goto(random.randint(-300, 300), random.randint(-250, 250)) #Collision testing
-            missile.status= "ready"
-            game.score -= 50
-            game.status()
+        for enemy in enemies:
+            enemy.move()
+            #Checking Player-Enemy collision
+            if player.collision(enemy):
+                enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #For collision testing purposes. Do not use in final
+                game.score -= 25 #Loses less points because kamikaze lol
+                game.status()
+
+            #Checking Projectile-Enemy collision
+            if missile.collision(enemy):
+                enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #Collision testing
+                missile.status= "ready"
+                game.score += 100
+                game.status()
+
+        missile.move()
+
+        for ally in allies:
+            ally.move()
+            #Checking Player-Ally collision
+            if player.collision(ally):
+                ally.goto(random.randint(-300, 300), random.randint(-250, 250)) #For collision testing purposes. Do not use in final
+                game.score -= 50
+                game.status()
+
+            #Checking Projectile-Ally collision
+            if missile.collision(ally):
+                ally.goto(random.randint(-300, 300), random.randint(-250, 250)) #Collision testing
+                missile.status= "ready"
+                game.score -= 50
+                game.status()
 
 if __name__ == '__main__':
     main()
