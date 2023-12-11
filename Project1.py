@@ -93,7 +93,7 @@ class Projectile(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
         self.shapesize(stretch_wid=0.3, stretch_len=0.4)
-        self.speed = 15
+        self.speed = 20
         self.status = "ready"
         self.goto(-1000,1000)
         
@@ -142,6 +142,15 @@ class Game():
         self.pen.penup()
         self.pen.goto(-350, 310)
         self.pen.write('Score: %s' %(self.score), font = ('Times New Roman', 20, 'normal'))
+    
+    def exit(self):
+        turtle.clearscreen()
+        turtle.bgcolor('black')
+        self.pen.pendown()
+        self.pen.goto(0, 0)
+        self.pen.write('Thank you for playing!', font = ('Times New Roman', 35, 'normal'), align = 'center')
+        time.sleep(1)
+        turtle.bye()
 
 game = Game() #Create game object
 game.border() #Draw game border
@@ -168,7 +177,9 @@ turtle.onkey(player.accelerate, 'w')
 turtle.onkey(player.decelerate, 'Down')
 turtle.onkey(player.decelerate, 's')
 
-turtle.onkey(missile.fire, "space")
+turtle.onkey(missile.fire, 'space')
+
+turtle.onkey(game.exit, 'Escape')
 turtle.listen()
 
 #Main game loop
@@ -189,6 +200,7 @@ def main():
             #Checking Projectile-Enemy collision
             if missile.collision(enemy):
                 enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #Collision testing
+                missile.goto(-1000, 1000)
                 missile.status= "ready"
                 game.score += 100
                 game.status()
@@ -206,6 +218,7 @@ def main():
             #Checking Projectile-Ally collision
             if missile.collision(ally):
                 ally.goto(random.randint(-300, 300), random.randint(-250, 250)) #Collision testing
+                missile.goto(-1000, 1000)
                 missile.status= "ready"
                 game.score -= 50
                 game.status()
