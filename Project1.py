@@ -7,6 +7,7 @@ import time
 #Create screen
 turtle.speed(0) #Set animation speed to max
 turtle.bgcolor('black') #Set screen background color
+#turtle.bgpic('BG.gif')
 turtle.ht() #Hide the turtle created by default
 turtle.Screen().getcanvas().winfo_toplevel().attributes('-fullscreen', True) #Open window in fullscreen by default
 turtle.setundobuffer(1) #Reduce strain on system memory
