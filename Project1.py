@@ -1,6 +1,6 @@
-import os
 import turtle
 import random
+import time
 #from pydub import AudioSegment
 #from pydub.playback import play
 
@@ -10,7 +10,7 @@ turtle.bgcolor('black') #Set screen background color
 turtle.ht() #Hide the turtle created by default
 turtle.Screen().getcanvas().winfo_toplevel().attributes('-fullscreen', True) #Open window in fullscreen by default
 turtle.setundobuffer(1) #Reduce strain on system memory
-turtle.tracer(1) #Increase drawing speed
+turtle.tracer(0) #Increase drawing speed
 
 maxSpeed = 6 #Set max speed of player
 minSpeed = 0 #Set min speed of player
@@ -174,6 +174,8 @@ turtle.listen()
 #Main game loop
 def main():
     while True:
+        turtle.update()
+        time.sleep(0.05)
         player.move()
 
         for enemy in enemies:
