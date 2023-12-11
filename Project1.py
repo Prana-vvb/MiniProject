@@ -43,6 +43,10 @@ class Actors(turtle.Turtle):
         elif self.ycor() < -290:
             self.sety(-291)
             self.rt(60)
+    
+    def stop(self):
+        self.goto(-1000, 1000)
+        self.speed = 0
         
     #Actor-Actor collision detection
     def collision(self, actor):
@@ -112,12 +116,35 @@ class Projectile(Actors):
         if self.xcor()<-340 or self.xcor() > 340 or self.ycor()<-290 or self.ycor() > 290 :
             self.goto(-1000,1000)
             self.status = 'ready'
-            
+
+class Particle(Actors):
+    def __init__(self, ashape, color, startX, startY):
+        Actors.__init__(self, ashape, color, startX, startY)
+        self.shapesize(stretch_wid=0.1, stretch_len=0.1)
+        self.goto(-1000, 1000)
+        self.frame = 0
+    
+    def start_exploding(self, startx, starty):
+        self.goto(startx, starty)
+        self.setheading(random.randint(0, 360))
+        self.frame = 1
+        
+    def move(self):
+        if self.frame > 0 and self.frame <= 10:
+                self.fd(30)
+                self.frame += 1
+        else:
+            self.frame = 0
+            self.goto(-1000, 1000)
+
 #Game info(Score, levels etc.)
 class Game():
     def __init__(self):
         self.level = 1
         self.score = 0
+        self.high_score = 0
+        if self.score > self.high_score:
+            self.high_score = self.score
         self.gameState = 'play'
         self.pen = turtle.Turtle()
         self.lives = 3
@@ -143,6 +170,12 @@ class Game():
         self.pen.penup()
         self.pen.goto(-350, 310)
         self.pen.write('Score: %s' %(self.score), font = ('Times New Roman', 20, 'normal'))
+        self.pen.goto(200, 310)
+        self.pen.write('High Score: %s' %(self.score), font = ('Times New Roman', 20, 'normal'))
+        self.pen.goto(-350, -350)
+        self.pen.write('Lives: %s' %(self.lives), font = ('Times New Roman', 20, 'normal'))
+        self.pen.goto(280, -350)
+        self.pen.write('Level: %s' %(self.level), font = ('Times New Roman', 20, 'normal'))
     
     def exit(self):
         turtle.clearscreen()
@@ -164,7 +197,13 @@ missile = Projectile("triangle", "yellow", 0, 0) #Create projectile object
 allies = []
 for i in range(6):
     allies.append(Ally("square", "blue", 200, 0)) #Create ally object
-
+particles_e = []
+for i in range(60):
+    particles_e.append(Particle('circle', 'orange', 0, 0))
+particles_a = []
+for i in range(60):
+    particles_a.append(Particle('circle', 'dodger blue', 0, 0))
+particles = [particles_e, particles_a]
 #Key bindings
 turtle.onkey(player.turnL, 'Left')
 turtle.onkey(player.turnL, 'a')
@@ -194,13 +233,18 @@ def main():
             enemy.move()
             #Checking Player-Enemy collision
             if player.collision(enemy):
-                enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #For collision testing purposes. Do not use in final
+                for p in particles_e:
+                    p.start_exploding(enemy.xcor(), enemy.ycor())
+                enemy.stop()
                 game.score -= 25 #Loses less points because kamikaze lol
+                player.lives -= 1
                 game.status()
 
             #Checking Projectile-Enemy collision
             if missile.collision(enemy):
-                enemy.goto(random.randint(-300, 300), random.randint(-250, 250)) #Collision testing
+                enemy.stop()
+                for p in particles_e:
+                    p.start_exploding(missile.xcor(), missile.ycor())
                 missile.goto(-1000, 1000)
                 missile.status= "ready"
                 game.score += 100
@@ -212,17 +256,29 @@ def main():
             ally.move()
             #Checking Player-Ally collision
             if player.collision(ally):
-                ally.goto(random.randint(-300, 300), random.randint(-250, 250)) #For collision testing purposes. Do not use in final
+                for p in particles_a:
+                    p.start_exploding(ally.xcor(), ally.ycor())
+                ally.stop()
                 game.score -= 50
+                player.lives -= 1
                 game.status()
 
             #Checking Projectile-Ally collision
             if missile.collision(ally):
-                ally.goto(random.randint(-300, 300), random.randint(-250, 250)) #Collision testing
+                ally.stop()
+                for p in particles_a:
+                    p.start_exploding(missile.xcor(), missile.ycor())
                 missile.goto(-1000, 1000)
                 missile.status= "ready"
                 game.score -= 50
                 game.status()
+        
+        for parts in particles:
+            for p in parts:
+                p.move()
+                #Checking Particle-Border collision
+                if p.xcor()<-340 or p.xcor() > 340 or p.ycor()<-290 or p.ycor() > 290 :
+                    p.goto(-1000, 1000)
 
 if __name__ == '__main__':
     main()
