@@ -60,7 +60,6 @@ class Player(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
         self.speed = 0 #Player start speed. Can be increased/decreased using accelerate/decelerate functions
-        self.lives = 3 #Default player lives
     
     #Define player movement functions
     def turnL(self):
@@ -145,8 +144,22 @@ class Game():
         self.high_score = 0
         if self.score > self.high_score:
             self.high_score = self.score
-        self.gameState = 'play'
         self.pen = turtle.Turtle()
+        self.hs = turtle.Turtle()
+        self.liv = turtle.Turtle()
+        self.lvl = turtle.Turtle()
+        self.hs.speed(0)
+        self.hs.ht()
+        self.hs.color('white')
+        self.hs.goto(-1000, 1000)
+        self.liv.speed(0)
+        self.liv.ht()
+        self.liv.color('white')
+        self.liv.goto(-1000, 1000)
+        self.lvl.speed(0)
+        self.lvl.ht()
+        self.lvl.color('white')
+        self.lvl.goto(-1000, 1000)
         self.lives = 3
     
     #Draws the border for the playable game area
@@ -167,16 +180,26 @@ class Game():
 
     def status(self):
         self.pen.undo()
+        self.hs.undo()
+        self.liv.undo()
+        self.lvl.undo()
+
         self.pen.penup()
         self.pen.goto(-350, 310)
         self.pen.write('Score: %s' %(self.score), font = ('Times New Roman', 20, 'normal'))
-        self.pen.goto(200, 310)
-        self.pen.write('High Score: %s' %(self.score), font = ('Times New Roman', 20, 'normal'))
-        self.pen.goto(-350, -350)
-        self.pen.write('Lives: %s' %(self.lives), font = ('Times New Roman', 20, 'normal'))
-        self.pen.goto(280, -350)
-        self.pen.write('Level: %s' %(self.level), font = ('Times New Roman', 20, 'normal'))
-    
+        
+        self.hs.penup()
+        self.hs.goto(200, 310)
+        self.hs.write('High Score: %s' %(self.score), font = ('Times New Roman', 20, 'normal'))
+
+        self.liv.penup()
+        self.liv.goto(-350, -350)
+        self.liv.write('Lives: %s' %(self.lives), font = ('Times New Roman', 20, 'normal'))
+
+        self.lvl.penup()
+        self.lvl.goto(280, -350)
+        self.lvl.write('Level: %s' %(self.level), font = ('Times New Roman', 20, 'normal'))
+
     def exit(self):
         turtle.clearscreen()
         turtle.bgcolor('black')
@@ -193,13 +216,17 @@ player = Player('classic', 'white', 0, 0) #Create player object
 
 enemies = []
 for i in range(6):
-    enemies.append(Enemy('circle', 'red', random.randint(-341, 339), random.randint(-291, 289))) #Create enemy objects
+    x = random.randint(-341, 339)
+    y = random.randint(-291, 289)
+    enemies.append(Enemy('circle', 'red', x, y)) #Create enemy objects
 
 missile = Projectile("triangle", "yellow", 0, 0) #Create projectile object
 
 allies = []
 for i in range(6):
-    allies.append(Ally("square", "blue", random.randint(-341, 339), random.randint(-291, 289))) #Create ally object
+    x = random.randint(-341, 339)
+    y = random.randint(-291, 289)
+    allies.append(Ally("square", "blue", x, y)) #Create ally object
 
 particles_e = []
 for i in range(60):
@@ -235,7 +262,7 @@ def main():
         turtle.update()
         time.sleep(0.05)
         player.move()
-
+        
         for enemy in enemies:
             enemy.move()
             #Checking Player-Enemy collision
@@ -244,7 +271,7 @@ def main():
                     p.start_exploding(enemy.xcor(), enemy.ycor())
                 enemy.stop()
                 game.score -= 25 #Loses less points because kamikaze lol
-                player.lives -= 1
+                game.lives -= 1
                 game.status()
 
             #Checking Projectile-Enemy collision
@@ -267,7 +294,7 @@ def main():
                     p.start_exploding(ally.xcor(), ally.ycor())
                 ally.stop()
                 game.score -= 50
-                player.lives -= 1
+                game.lives -= 1
                 game.status()
 
             #Checking Projectile-Ally collision
