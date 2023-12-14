@@ -12,6 +12,7 @@ turtle.ht() #Hide the turtle created by default
 turtle.Screen().getcanvas().winfo_toplevel().attributes('-fullscreen', True) #Open window in fullscreen by default
 turtle.setundobuffer(1) #Reduce strain on system memory
 turtle.tracer(0) #Increase drawing speed
+store = open('High scores.txt', 'w')
 
 maxSpeed = 6 #Set max speed of player
 minSpeed = 0 #Set min speed of player
@@ -144,10 +145,14 @@ class Game():
         self.high_score = 0
         if self.score > self.high_score:
             self.high_score = self.score
+        store.write(str(self.high_score))
         self.pen = turtle.Turtle()
         self.hs = turtle.Turtle()
         self.liv = turtle.Turtle()
         self.lvl = turtle.Turtle()
+        self.pen.speed(0)
+        self.pen.ht()
+        self.pen.color('white')
         self.hs.speed(0)
         self.hs.ht()
         self.hs.color('white')
@@ -161,12 +166,9 @@ class Game():
         self.lvl.color('white')
         self.lvl.goto(-1000, 1000)
         self.lives = 3
-    
+
     #Draws the border for the playable game area
     def border(self):
-        self.pen.speed(0)
-        self.pen.ht()
-        self.pen.color('white')
         self.pen.pensize(4)
         self.pen.penup()
         self.pen.goto(-350, 300)
@@ -203,7 +205,6 @@ class Game():
     def exit(self):
         turtle.clearscreen()
         turtle.bgcolor('black')
-        self.pen.pendown()
         self.pen.goto(0, 0)
         self.pen.write('Thank you for playing!', font = ('Times New Roman', 35, 'normal'), align = 'center')
         time.sleep(1)
