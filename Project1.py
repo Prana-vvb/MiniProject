@@ -190,20 +190,27 @@ game = Game() #Create game object
 game.border() #Draw game border
 game.status() #Display game stats(Score, player lives, level etc.)
 player = Player('classic', 'white', 0, 0) #Create player object
+
 enemies = []
 for i in range(6):
-    enemies.append(Enemy('circle', 'red', -100, 0)) #Create enemy objects
+    enemies.append(Enemy('circle', 'red', random.randint(-341, 339), random.randint(-291, 289))) #Create enemy objects
+
 missile = Projectile("triangle", "yellow", 0, 0) #Create projectile object
+
 allies = []
 for i in range(6):
-    allies.append(Ally("square", "blue", 200, 0)) #Create ally object
+    allies.append(Ally("square", "blue", random.randint(-341, 339), random.randint(-291, 289))) #Create ally object
+
 particles_e = []
 for i in range(60):
     particles_e.append(Particle('circle', 'orange', 0, 0))
+
 particles_a = []
 for i in range(60):
     particles_a.append(Particle('circle', 'dodger blue', 0, 0))
+
 particles = [particles_e, particles_a]
+
 #Key bindings
 turtle.onkey(player.turnL, 'Left')
 turtle.onkey(player.turnL, 'a')
