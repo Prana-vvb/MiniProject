@@ -286,6 +286,7 @@ def main():
         time.sleep(0.05)
         player.move()
 
+        #Level check
         if count_e == 0:
             game.level += 1
             game.status()
