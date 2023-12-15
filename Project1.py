@@ -12,7 +12,6 @@ turtle.ht() #Hide the turtle created by default
 turtle.Screen().getcanvas().winfo_toplevel().attributes('-fullscreen', True) #Open window in fullscreen by default
 turtle.setundobuffer(1) #Reduce strain on system memory
 turtle.tracer(0) #Increase drawing speed
-store = open('High scores.txt', 'w+')
 
 MAXSPEED = 6 #Set max speed of player
 MINSPEED= 0 #Set min speed of player
@@ -145,8 +144,6 @@ class Game():
     def __init__(self):
         self.level = 1
         self.score = 0
-        self.high_score = 0
-        store.write(str(self.high_score))
         self.pen = turtle.Turtle()
         self.hs = turtle.Turtle()
         self.liv = turtle.Turtle()
@@ -154,10 +151,6 @@ class Game():
         self.pen.speed(0)
         self.pen.ht()
         self.pen.color('white')
-        self.hs.speed(0)
-        self.hs.ht()
-        self.hs.color('white')
-        self.hs.goto(-1000, 1000)
         self.liv.speed(0)
         self.liv.ht()
         self.liv.color('white')
@@ -189,12 +182,8 @@ class Game():
         self.lvl.undo()
 
         self.pen.penup()
-        self.pen.goto(-350, 310)
-        self.pen.write('Score: %s' %(self.score), font = ('Times New Roman', 20, 'normal'))
-        
-        self.hs.penup()
-        self.hs.goto(200, 310)
-        self.hs.write('High Score: %s' %(self.high_score), font = ('Times New Roman', 20, 'normal'))
+        self.pen.goto(0, 310)
+        self.pen.write('Score: %s' %(self.score), font = ('Times New Roman', 20, 'normal'), align = 'center')
 
         self.liv.penup()
         self.liv.goto(-350, -350)
@@ -365,11 +354,6 @@ def main():
                 #Checking Particle-Border collision
                 if p.xcor()<-340 or p.xcor() > 340 or p.ycor()<-290 or p.ycor() > 290 :
                     p.goto(-1000, 1000)
-        
-        #Display updated high score
-        if game.score > game.high_score:
-            game.high_score = game.score
-            game.status()
 
         #End game if player loses all lives
         if game.lives == 0:
