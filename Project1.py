@@ -145,7 +145,7 @@ class Game():
     def __init__(self):
         self.level = 1
         self.score = 0
-        self.high_score = 0
+        self.high_score = int(store.read())
         if self.score > self.high_score:
             self.high_score = self.score
         store.write(str(self.high_score))
@@ -196,7 +196,7 @@ class Game():
         
         self.hs.penup()
         self.hs.goto(200, 310)
-        self.hs.write('High Score: %s' %(self.score), font = ('Times New Roman', 20, 'normal'))
+        self.hs.write('High Score: %s' %(self.high_score), font = ('Times New Roman', 20, 'normal'))
 
         self.liv.penup()
         self.liv.goto(-350, -350)
