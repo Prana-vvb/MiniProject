@@ -12,7 +12,7 @@ turtle.ht() #Hide the turtle created by default
 turtle.Screen().getcanvas().winfo_toplevel().attributes('-fullscreen', True) #Open window in fullscreen by default
 turtle.setundobuffer(1) #Reduce strain on system memory
 turtle.tracer(0) #Increase drawing speed
-store = open('High scores.txt', 'w')
+store = open('High scores.txt', 'w+')
 
 MAXSPEED = 6 #Set max speed of player
 MINSPEED= 0 #Set min speed of player
@@ -119,6 +119,7 @@ class Projectile(Actors):
             self.goto(-1000,1000)
             self.status = 'ready'
 
+#Particles to display on Actor-Actor collision
 class Particle(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.__init__(self, ashape, color, startX, startY)
@@ -182,6 +183,7 @@ class Game():
             self.pen.rt(90)
         self.pen.penup()
 
+    #Displays game stats like Score, High Score, Lives etc.
     def status(self):
         self.pen.undo()
         self.hs.undo()
@@ -220,25 +222,24 @@ player = Player('classic', 'white', 0, 0) #Create player object
 enemies = []
 allies = []
 
-#Create enemy objects
 def create_e(c):
     for i in range(c):
         x = random.randint(-341, 339)
         y = random.randint(-291, 289)
         enemies.append(Enemy('circle', 'red', x, y))
 
-#Create ally object
 def create_a(c):
     for i in range(c):
         x = random.randint(-341, 339)
         y = random.randint(-291, 289)
         allies.append(Ally("square", "blue", x, y))
 
-create_e(ECOUNT)
-create_a(ACOUNT)
+create_e(ECOUNT) #Create enemy objects
+create_a(ACOUNT) #Create ally objects
 
 missile = Projectile("triangle", "yellow", 0, 0) #Create projectile object
 
+#Create collision particles
 particles_e = []
 for i in range(60):
     particles_e.append(Particle('circle', 'orange', 0, 0))
@@ -272,6 +273,7 @@ turtle.listen()
 def main():
     global ECOUNT
     global ACOUNT
+    #Initialise local variables to count enemies and allies
     count_e = ECOUNT
     count_a = ACOUNT
     pen = turtle.Turtle()
@@ -347,6 +349,7 @@ def main():
                 if p.xcor()<-340 or p.xcor() > 340 or p.ycor()<-290 or p.ycor() > 290 :
                     p.goto(-1000, 1000)
         
+        #End game if player loses all lives
         if game.lives == 0:
             turtle.clearscreen()
             turtle.bgcolor('black')
