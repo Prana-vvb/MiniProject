@@ -145,9 +145,7 @@ class Game():
     def __init__(self):
         self.level = 1
         self.score = 0
-        self.high_score = int(store.read())
-        if self.score > self.high_score:
-            self.high_score = self.score
+        self.high_score = 0
         store.write(str(self.high_score))
         self.pen = turtle.Turtle()
         self.hs = turtle.Turtle()
@@ -281,6 +279,24 @@ def main():
     pen.penup()
     pen.ht()
 
+    #Display game title and player instructions
+    pen.goto(-560, 0)
+    pen.write('Spacewar!', font = ('Times New Roman', 35, 'normal'), align = 'center')
+    pen.goto(560, 200)
+    pen.write('How to play', font = ('Times New Roman', 30, 'normal'), align = 'center')
+    pen.goto(560, 100)
+    pen.write('Use W/A/S/D or the arrow keys', font = ('Times New Roman', 20, 'normal'), align = 'center')
+    pen.goto(560, 70)
+    pen.write('to move', font = ('Times New Roman', 20, 'normal'), align = 'center')
+    pen.goto(560, -20)
+    pen.write('Use the spacebar or the Enter key', font = ('Times New Roman', 20, 'normal'), align = 'center')
+    pen.goto(560, -50)
+    pen.write('to shoot', font = ('Times New Roman', 20, 'normal'), align = 'center')
+    pen.goto(560, -140)
+    pen.write('Shoot down your enemies(red)', font = ('Times New Roman', 20, 'normal'), align = 'center')
+    pen.goto(560, -170)
+    pen.write('while avoiding friendlies(blue)', font = ('Times New Roman', 20, 'normal'), align = 'center')
+
     while True:
         turtle.update()
         time.sleep(0.05)
@@ -350,6 +366,11 @@ def main():
                 if p.xcor()<-340 or p.xcor() > 340 or p.ycor()<-290 or p.ycor() > 290 :
                     p.goto(-1000, 1000)
         
+        #Display updated high score
+        if game.score > game.high_score:
+            game.high_score = game.score
+            game.status()
+
         #End game if player loses all lives
         if game.lives == 0:
             turtle.clearscreen()
