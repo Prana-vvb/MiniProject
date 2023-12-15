@@ -14,8 +14,10 @@ turtle.setundobuffer(1) #Reduce strain on system memory
 turtle.tracer(0) #Increase drawing speed
 store = open('High scores.txt', 'w')
 
-maxSpeed = 6 #Set max speed of player
-minSpeed = 0 #Set min speed of player
+MAXSPEED = 6 #Set max speed of player
+MINSPEED= 0 #Set min speed of player
+ECOUNT = 3 #Set default enemy count
+ACOUNT = 3 #Set default ally count
 
 #Actors are in-game objects. Child class of the turtle module
 class Actors(turtle.Turtle):
@@ -70,11 +72,11 @@ class Player(Actors):
         self.rt(45)
     
     def accelerate(self):
-        if self.speed < maxSpeed:
+        if self.speed < MAXSPEED:
             self.speed += 1
     
     def decelerate(self):
-        if self.speed > minSpeed:
+        if self.speed > MINSPEED:
             self.speed -= 1
 
 #Enemies. Child of Actors  
@@ -216,18 +218,26 @@ game.status() #Display game stats(Score, player lives, level etc.)
 player = Player('classic', 'white', 0, 0) #Create player object
 
 enemies = []
-for i in range(6):
-    x = random.randint(-341, 339)
-    y = random.randint(-291, 289)
-    enemies.append(Enemy('circle', 'red', x, y)) #Create enemy objects
+allies = []
+
+#Create enemy objects
+def create_e(c):
+    for i in range(c):
+        x = random.randint(-341, 339)
+        y = random.randint(-291, 289)
+        enemies.append(Enemy('circle', 'red', x, y))
+
+#Create ally object
+def create_a(c):
+    for i in range(c):
+        x = random.randint(-341, 339)
+        y = random.randint(-291, 289)
+        allies.append(Ally("square", "blue", x, y))
+
+create_e(ECOUNT)
+create_a(ACOUNT)
 
 missile = Projectile("triangle", "yellow", 0, 0) #Create projectile object
-
-allies = []
-for i in range(6):
-    x = random.randint(-341, 339)
-    y = random.randint(-291, 289)
-    allies.append(Ally("square", "blue", x, y)) #Create ally object
 
 particles_e = []
 for i in range(60):
@@ -253,16 +263,34 @@ turtle.onkey(player.decelerate, 'Down')
 turtle.onkey(player.decelerate, 's')
 
 turtle.onkey(missile.fire, 'space')
+turtle.onkey(missile.fire, 'Return')
 
 turtle.onkey(game.exit, 'Escape')
 turtle.listen()
 
 #Main game loop
 def main():
+    global ECOUNT
+    global ACOUNT
+    count_e = ECOUNT
+    count_a = ACOUNT
+    pen = turtle.Turtle()
+    pen.color('white')
+    pen.penup()
+    pen.ht()
+
     while True:
         turtle.update()
         time.sleep(0.05)
         player.move()
+
+        if count_e == 0:
+            game.level += 1
+            game.status()
+            count_a = ACOUNT + game.level
+            count_e = ECOUNT + game.level
+            create_a(count_a)
+            create_e(count_e)
         
         for enemy in enemies:
             enemy.move()
@@ -273,6 +301,7 @@ def main():
                 enemy.stop()
                 game.score -= 25 #Loses less points because kamikaze lol
                 game.lives -= 1
+                count_e -= 1
                 game.status()
 
             #Checking Projectile-Enemy collision
@@ -283,6 +312,7 @@ def main():
                 missile.goto(-1000, 1000)
                 missile.status= "ready"
                 game.score += 100
+                count_e -= 1
                 game.status()
 
         missile.move()
@@ -296,6 +326,7 @@ def main():
                 ally.stop()
                 game.score -= 50
                 game.lives -= 1
+                count_a -= 1
                 game.status()
 
             #Checking Projectile-Ally collision
@@ -306,6 +337,7 @@ def main():
                 missile.goto(-1000, 1000)
                 missile.status= "ready"
                 game.score -= 50
+                count_a -= 1
                 game.status()
         
         for parts in particles:
@@ -314,6 +346,16 @@ def main():
                 #Checking Particle-Border collision
                 if p.xcor()<-340 or p.xcor() > 340 or p.ycor()<-290 or p.ycor() > 290 :
                     p.goto(-1000, 1000)
+        
+        if game.lives == 0:
+            turtle.clearscreen()
+            turtle.bgcolor('black')
+            pen.goto(0, 30)
+            pen.write('Game Over', font = ('Times New Roman', 35, 'normal'), align = 'center')
+            pen.goto(0, -30)
+            pen.write('Thank you for playing!', font = ('Times New Roman', 35, 'normal'), align = 'center')
+            time.sleep(5)
+            turtle.bye()
 
 if __name__ == '__main__':
     main()
