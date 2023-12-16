@@ -1,8 +1,8 @@
 import turtle
 import random
 import time
-from pydub import AudioSegment
-from pydub.playback import play
+#from pydub import AudioSegment
+#from pydub.playback import play
 
 #Create screen
 turtle.speed(0) #Set animation speed to max
@@ -105,7 +105,7 @@ class Projectile(Actors):
         
     def fire(self):
         if self.status == 'ready':
-            play(AudioSegment.from_wav("projectileFire.wav"))
+            #play(AudioSegment.from_wav("projectileFire.wav"))
             self.goto(player.xcor(), player.ycor())
             self.setheading(player.heading())
             self.status =  "firing"
