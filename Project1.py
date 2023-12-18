@@ -14,7 +14,7 @@ turtle.setundobuffer(1) #Reduce strain on system memory
 turtle.tracer(0) #Increase drawing speed
 
 MAXSPEED = 6 #Set max speed of player
-MINSPEED= 0 #Set min speed of player
+MINSPEED = 0 #Set min speed of player
 ECOUNT = 3 #Set default enemy count
 ACOUNT = 3 #Set default ally count
 
@@ -174,7 +174,7 @@ class Game():
             self.pen.rt(90)
         self.pen.penup()
 
-    #Displays game stats like Score, High Score, Lives etc.
+    #Displays game stats like Score, Lives etc.
     def status(self):
         self.pen.undo()
         self.hs.undo()
