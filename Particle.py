@@ -1,8 +1,8 @@
 import Actors
 import random
 
-#Explosion particles
-class Particle(Actors.Actors):
+#Particles to display on Actor-Actor collision
+class Particle(Actors):
     def __init__(self, ashape, color, startX, startY):
         Actors.Actors.__init__(self, ashape, color, startX, startY)
         self.shapesize(stretch_wid=0.1, stretch_len=0.1)
